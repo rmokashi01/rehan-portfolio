@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehan Mokashi | Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* General Body and Font Styles */
+        :root {
+            --primary-color: #0E5484;
+            --accent-color: #008080;
+            --background-light: #F4F7F9;
+            --text-dark: #2E2E2E;
+            --text-light: #F4F7F9;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+
+            --sidebar-collapsed-width: 70px;
+            --sidebar-expanded-width: 300px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: var(--text-dark);
+            transition: padding-left 0.3s ease-in-out;
+        }
+
+        /* --- Layout for Two-Column Structure --- */
+        .portfolio-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Menu Toggle Button */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            background-color: #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px var(--shadow-light);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Left Column (Collapsible Sidebar) */
+        .left-column {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 2px 0 5px var(--shadow-light);
+            z-index: 1000;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* Styles for collapsed and expanded states on the body */
+        body.sidebar-collapsed .left-column {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        body.sidebar-expanded .left-column {
+            width: var(--sidebar-expanded-width);
+        }
+
+        body.sidebar-collapsed .left-column .profile-info .name,
+        body.sidebar-collapsed .left-column .profile-info .title,
+        body.sidebar-collapsed .nav-label {
+            display: none;
+        }
+
+        /* Profile picture resizing - FIXED ALIGNMENT */
+        .profile-info {
+            position: relative;
+            margin-top: 50px;
+            transition: margin-top 0.3s ease-in-out;
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            box-shadow: 0 2px 4px var(--shadow-light);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+            display: block;
+            margin: 0 auto;
+        }
+
+        body.sidebar-collapsed .profile-pic {
+            width: 40px;
+            height: 40px;
+            margin-top: 20px;
+        }
+
+        /* Right Column (Scrollable Content) - FIXED RESIZING */
+        .right-column {
+            flex-grow: 1;
+            padding: 40px 40px 40px 60px;
+            transition: margin-left 0.3s ease-in-out;
+            box-sizing: border-box;
+            margin-left: var(--sidebar-expanded-width);
+            width: calc(100% - var(--sidebar-expanded-width));
+            position: relative;
+            z-index: 1;
+        }
+
+        body.sidebar-collapsed .right-column {
+            margin-left: var(--sidebar-collapsed-width);
+            width: calc(100% - var(--sidebar-collapsed-width));
+        }
+
+        /* --- Common Component Styles --- */
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
+        .entry-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px var(--shadow-light);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .entry-card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* --- Header and Navigation --- */
+        header {
+            text-align: center;
+        }
+
+        header .profile-info {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin: 5px 0 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav a {
+            display: block;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 10px 15px;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav a i {
+            margin-right: 8px;
+        }
+
+        .nav-label {
+            transition: opacity 0.3s ease-in-out;
+            opacity: 1;
+        }
+
+        body.sidebar-collapsed .nav-label {
+            opacity: 0;
+        }
+
+        /* --- Sections --- */
+        section {
+            padding: 40px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        section h2 i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .job-entry ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .job-entry li {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .job-entry li:before {
+            content: "\2022";
+            color: var(--accent-color);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* --- Projects Section --- */
+        .project-entry h3 {
+            margin: 0 0 5px;
+        }
+        
+        .project-dates {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .project-links a {
+            margin-right: 15px;
+        }
+
+        .project-links i {
+            margin-right: 5px;
+        }
+
+        .tech-badges {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-badges span {
+            background-color: #e0e0e0;
+            color: #444;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* --- Skills & Certifications --- */
+        .skill-group {
+            margin-bottom: 30px;
+        }
+
+        .skill-group h3 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        .skill-list, .certification-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-list li {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .certification-list li {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .certification-list li a {
+            color: var(--text-light);
+        }
+
+        .certification-list li i {
+            margin-right: 8px;
+        }
+
+        /* --- Contact Section --- */
+        #contact {
+            text-align: center;
+        }
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .contact-icons a {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px var(--shadow-light);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .contact-icons a:hover {
+            transform: translateY(-5px);
+            background-color: var(--accent-color);
+        }
+
+        .contact-icons a[data-label]::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -35px;
+            background-color: var(--text-dark);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .contact-icons a:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .portfolio-container {
+                flex-direction: column;
+            }
+
+            body.sidebar-expanded .left-column {
+                transform: translateX(0);
+                box-shadow: 2px 0 5px var(--shadow-light);
+            }
+            
+            .left-column {
+                position: fixed;
+                width: 250px;
+                height: 100vh;
+                z-index: 999;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+            }
+            
+            .left-column.expanded {
+                transform: translateX(0);
+            }
+
+            .left-column.expanded .menu-toggle {
+                left: 205px;
+            }
+
+            .right-column {
+                margin-left: 0;
+                padding: 40px 20px;
+                width: 100% !important;
+            }
+
+            .contact-icons {
+                gap: 15px;
+            }
+
+            .contact-icons a {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            /* Adjust profile position for mobile */
+            .profile-info {
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Container for the two-column layout -->
+    <div class="portfolio-container">
+        <!-- Left Column (Fixed) -->
+        <div class="left-column" id="sidebar">
+            <!-- Toggle button for mobile and desktop -->
+            <div class="menu-toggle" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <header>
+                <div class="profile-info">
+                    <img src="deep/rehan-profile.jpg" alt="Rehan Mokashi Profile Picture" class="profile-pic">
+                    <h1 class="name">Rehan Mokashi</h1>
+                    <p class="title">Embedded Systems & Software Engineer</p>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#about"><i class="fas fa-user-circle"></i><span class="nav-label">About</span></a></li>
+                        <li><a href="#education"><i class="fas fa-graduation-cap"></i><span class="nav-label">Education</span></a></li>
+                        <li><a href="#experience"><i class="fas fa-briefcase"></i><span class="nav-label">Experience</span></a></li>
+                        <li><a href="#projects"><i class="fas fa-laptop-code"></i><span class="nav-label">Projects</span></a></li>
+                        <li><a href="#achievements"><i class="fas fa-trophy"></i><span class="nav-label">Achievements</span></a></li>
+                        <li><a href="#skills"><i class="fas fa-tools"></i><span class="nav-label">Skills</span></a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope"></i><span class="nav-label">Contact</span></a></li>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+
+        <!-- Right Column (Scrollable Content) -->
+        <div class="right-column" id="content-container">
+            <main>
+                <!-- About Me Section -->
+                <section id="about">
+                    <h2><i class="fas fa-user-circle"></i> About Me</h2>
+                    <p>
+                        I am a highly motivated and results-driven individual with a strong foundation in embedded systems, IoT, and full-stack software development. With hands-on experience in C, Python, JavaScript, and various frameworks, I am passionate about building innovative solutions and solving complex technical challenges.
+                    </p>
+                    <p>
+                        My expertise spans across multiple domains including embedded systems design, IoT solutions, and full-stack web development. I enjoy working on challenging projects that require innovative thinking and technical excellence.
+                    </p>
+                </section>
+                
+                <!-- Education Section -->
+                <section id="education">
+                    <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+                    <div class="entry-card">
+                        <h3>B.Tech in CSE</h3>
+                        <p><strong>Annasaheb Dange College of Engineering and Technology, Ashta</strong></p>
+                        <p>2022-2025 | CGPA: 8.84/10</p>
+                    </div>
+                    <div class="entry-card">
+                        <h3>Diploma in CSE</h3>
+                        <p><strong>Sant Gajanan Maharaj Rural Polytechnic, Mahagaon</strong></p>
+                        <p>2019-2022 | 83.20%</p>
+                    </div>
+                    <div class="entry-card">
+                        <h3>SSC</h3>
+                        <p><strong>K.I.M. High School Ainapur</strong></p>
+                        <p>2019 | 65.20%</p>
+                    </div>
+                </section>
+
+                <!-- Experience Section - UPDATED WITH ALL ENTRIES -->
+                <section id="experience">
+                    <h2><i class="fas fa-briefcase"></i> Experience</h2>
+                    <article class="entry-card">
+                        <h3>Trainee</h3>
+                        <p class="company"><strong>Emertxe Information Technology</strong>, Bengaluru, KA</p>
+                        <p class="dates">Mar 2025 - Present</p>
+                        <ul>
+                            <li>Embedded Systems & IoT projects with C, RTOS, and Git.</li>
+                            <li><a href="https://drive.google.com/file/d/1X-T1h9VvB-6b_m_h5Yp_9o0u5-f4S5k/view" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://drive.google.com/file/d/1j9X3H-w9X6_o7u1jN0v5P_u1-bX4s3j/view" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Virtual Intern</h3>
+                        <p class="company"><strong>Microchip Technology Inc.</strong>, Remote</p>
+                        <p class="dates">Nov 2024 - Mar 2025</p>
+                        <ul>
+                            <li>Developed PIC MCU drivers using MPLAB X and performed hardware debugging.</li>
+                            <li><a href="https://www.linkedin.com/in/rehan-mokashi-7b32472a2/overlay/experience/2682388895/multiple-media-viewer?profileId=ACoAAEkBr7cBmGiBklLUnPEkWqhoUHLISoyobQ8&treasuryMediaId=1754409071641&type=DOCUMENT&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_media_list%3BEXPsiFMDSS%2B52GTHobhiaQ%3D%3D" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://www.linkedin.com/in/rehan-mokashi-7b32472a2/overlay/experience/2682388895/multiple-media-viewer?profileId=ACoAAEkBr7cBmGiBklLUnPEkWqhoUHLISoyobQ8&treasuryMediaId=1754409172714&type=DOCUMENT&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_media_list%3BEXPsiFMDSS%2B52GTHobhiaQ%3D%3D" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Internship Trainee</h3>
+                        <p class="company"><strong>e-Yantra, IIT Bombay</strong>, Remote</p>
+                        <p class="dates">Oct 2023 - Nov 2024</p>
+                        <ul>
+                            <li>Led robotics workshops, developed navigation algorithms, and mentored over 50 students.</li>
+                            <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7162093552565514240?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_media_list%3ByNzXC5UiS%2B6dLWPfz4vyuA%3D%3D" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://www.linkedin.com/in/rehan-mokashi-7b32472a2/overlay/experience/2368056067/multiple-media-viewer?profileId=ACoAAEkBr7cBmGiBklLUnPEkWqhoUHLISoyobQ8&treasuryMediaId=1711792973046&type=LINK&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_media_list%3ByNzXC5UiS%2B6dLWPfz4vyuA%3D%3D" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Fullstack Intern</h3>
+                        <p class="company"><strong>Techno Hack</strong>, Remote</p>
+                        <p class="dates">Jan 2024 - Jul 2024</p>
+                        <ul>
+                            <li>Developed Node.js, React, and MongoDB applications in agile sprints.</li>
+                            <li><a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_internship-technohacksedutechofficial-webdevelopment-activity-7160844226455371776-xCV1?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEkBr7cBmGiBklLUnPEkWqhoUHLISoyobQ8" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_webdevelopment-internship-technohacks-activity-7169251060815974400-qWv6?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEkBr7cBmGiBklLUnPEkWqhoUHLISoyobQ8" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                    <article class="entry-card">
+                        <h3>IoT Dev Intern</h3>
+                        <p class="company"><strong>Bolt IoT</strong>, Bengaluru, KA</p>
+                        <p class="dates">Aug 2023 - Oct 2023</p>
+                        <ul>
+                            <li>Used LM35 sensor and Twilio for SMS alerts and cloud analytics.</li>
+                            <li><a href="https://drive.google.com/file/d/12wrMIVBiB-7iWTa0GtLk6HIV4GyAlBCc/view" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://drive.google.com/file/d/1F54X8IM7XVjoy24ZyOZlcQW-fnCfczQh/view" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Software Dev Intern</h3>
+                        <p class="company"><strong>Domain Computers</strong>, Sangli, MH</p>
+                        <p class="dates">May 2023 - Jul 2023</p>
+                        <ul>
+                            <li>Developed a Flask/JS front-end and optimized MySQL databases.</li>
+                            <li><a href="https://drive.google.com/file/d/1pPcjTkNcWFaPZt-TBm2umkg8OHSg3I-n/view" target="_blank" rel="noopener noreferrer">Offer Letter</a> | <a href="https://drive.google.com/file/d/1qWd22NhAbygOrFYyfOUW7uEAk2IHa-mK/view" target="_blank" rel="noopener noreferrer">Certificate</a></li>
+                        </ul>
+                    </article>
+                </section>
+                
+                <!-- Projects Section - UPDATED WITH ALL PROJECTS -->
+                <section id="projects">
+                    <h2><i class="fas fa-laptop-code"></i> Projects</h2>
+                    <article class="entry-card">
+                        <h3>Address Book in C</h3>
+                        <p class="project-dates">Jun-Jul 2025</p>
+                        <p class="description">CLI CRUD tool with field validation.</p>
+                        <div class="project-links">
+                            <a href="https://github.com/rmokashi01/Address-Book-Project" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
+                            <a href="https://www.youtube.com/watch?v=r1tgh8xyz0M" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> Demo Video</a>
+                            <a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_cli-addressbook-in-c-activity-7348706040839925761-RkiF" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> Report</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>C</span>
+                            <span>CLI</span>
+                            <span>File Handling</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>NumCraft – Learn Number Systems</h3>
+                        <p class="project-dates">Jul 2025</p>
+                        <p class="description">Interactive CLI tool with ASCII visualization.</p>
+                        <div class="project-links">
+                            <a href="https://github.com/rmokashi01/numcraft-cli-tool-c" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
+                            <a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_learn-number-systems-with-numcraft-by-rehan-activity-7350821153810079744-ofNM" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> Report</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>C</span>
+                            <span>CLI</span>
+                            <span>Data Structures</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Social Media of Things</h3>
+                        <p class="project-dates">May-Jul 2023</p>
+                        <p class="description">IoT device interactions using Bolt WiFi module.</p>
+                        <div class="project-links">
+                            <a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_iot-boltwifimodule-techinnovation-activity-7163821697752657920-IcgN" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> Report</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>IoT</span>
+                            <span>Bolt WiFi</span>
+                            <span>Cloud</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Arduino Nano Drone</h3>
+                        <p class="project-dates">May-Jun 2023</p>
+                        <p class="description">Quadcopter design with PID control system.</p>
+                        <div class="tech-badges">
+                            <span>Arduino</span>
+                            <span>PID</span>
+                            <span>Drone</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Credit Card Fraud Detection</h3>
+                        <p class="project-dates">Apr 2023</p>
+                        <p class="description">Machine learning model for detecting fraudulent transactions.</p>
+                        <div class="project-links">
+                            <a href="https://www.linkedin.com/posts/rehan-mokashi-7b32472a2_machinelearning-datascience-frauddetection-activity-7161357449411620864-ivsR" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> Report</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>Python</span>
+                            <span>Machine Learning</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Decentralized Blockchain App (DApp)</h3>
+                        <p class="project-dates">Feb 2023</p>
+                        <p class="description">Solidity & Ganache smart contracts with Web3.js integration.</p>
+                        <div class="project-links">
+                            <a href="https://www.youtube.com/watch?v=FdpcpKss6-o" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> Demo Video</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>Blockchain</span>
+                            <span>Solidity</span>
+                            <span>Web3</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Transforming Railway Platform Crossings</h3>
+                        <p class="project-dates">Jun-Aug 2024</p>
+                        <p class="description">MQTT alerts and automated gates for railway line safety.</p>
+                        <div class="project-links">
+                            <a href="https://www.linkedin.com/in/rehan-mokashi-7b32472a2/details/projects/1711350599865" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i> Details</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>IoT</span>
+                            <span>MQTT</span>
+                            <span>Sensors</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Railway Crossing Automation</h3>
+                        <p class="project-dates">Mar 2025</p>
+                        <p class="description">TensorFlow Lite object detection with Raspberry Pi.</p>
+                        <div class="project-links">
+                            <a href="https://drive.google.com/file/d/1SXrWP3tn1TbJNFH-9tfa0MD9v2KHFm1e/view" target="_blank" rel="noopener noreferrer"><i class="fas fa-file-alt"></i> Docs</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>TensorFlow Lite</span>
+                            <span>Raspberry Pi</span>
+                            <span>Computer Vision</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>Hospital Helper Robot</h3>
+                        <p class="project-dates">Apr 2024</p>
+                        <p class="description">CNN-based facial recognition and RFID for automated assistance.</p>
+                        <div class="project-links">
+                            <a href="https://youtu.be/rfptOsD7g_I" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> Demo Video</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>CNN</span>
+                            <span>Robotics</span>
+                            <span>Computer Vision</span>
+                        </div>
+                    </article>
+                    <article class="entry-card">
+                        <h3>IoT-based Temp Monitoring</h3>
+                        <p class="project-dates">Oct 2023</p>
+                        <p class="description">LM35 sensor and SMS alerts with cloud analytics.</p>
+                        <div class="project-links">
+                            <a href="https://youtu.be/HAYh2L1jt8A" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> Demo Video</a>
+                        </div>
+                        <div class="tech-badges">
+                            <span>IoT</span>
+                            <span>Sensors</span>
+                            <span>Twilio</span>
+                        </div>
+                    </article>
+                </section>
+
+                <!-- Achievements & Publications Section - UPDATED -->
+                <section id="achievements">
+                    <h2><i class="fas fa-trophy"></i> Achievements & Publications</h2>
+                    <div class="entry-card">
+                        <h3>Journal Publication</h3>
+                        <p>The Grenze Journal | 04/08/2025</p>
+                        <p>Enhancing Railway Line Safety and Accessibility Using ML-Based Image Processing | <a href="https://thegrenze.com/index.php?display=page&view=journalabstract&absid=6345&id=8" target="_blank" rel="noopener noreferrer">Abstract</a></p>
+                    </div>
+                    <div class="entry-card">
+                        <h3>Conference Publication</h3>
+                        <p>Hinweis Research | Jul 2025</p>
+                        <p>IoT-ML Integrated Railway Safety Framework; peer-reviewed proceedings</p>
+                    </div>
+                    <div class="entry-card">
+                        <h3>Best Research Paper Award</h3>
+                        <p>IIM Jammu | Mar 2025</p>
+                        <p>Top paper among 120+ submissions | <a href="https://drive.google.com/file/d/13E5iV9H-NMi3i1mUNiXsaoczsKInjMqH/view" target="_blank" rel="noopener noreferrer">Paper</a></p>
+                    </div>
+                </section>
+
+                <!-- Skills & Certifications Section - UPDATED -->
+                <section id="skills">
+                    <h2><i class="fas fa-tools"></i> Skills & Certifications</h2>
+                    <div class="skill-group">
+                        <h3>Languages & Frameworks</h3>
+                        <ul class="skill-list">
+                            <li>C</li>
+                            <li>C++</li>
+                            <li>Python</li>
+                            <li>Java</li>
+                            <li>JavaScript</li>
+                            <li>SQL</li>
+                            <li>Node.js</li>
+                            <li>React</li>
+                            <li>Flask</li>
+                            <li>REST APIs</li>
+                        </ul>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Libraries & Tools</h3>
+                        <ul class="skill-list">
+                            <li>TensorFlow</li>
+                            <li>OpenCV</li>
+                            <li>scikit-learn</li>
+                            <li>PyTorch</li>
+                            <li>Arduino</li>
+                            <li>Raspberry Pi</li>
+                            <li>RTOS</li>
+                            <li>Git</li>
+                            <li>Docker</li>
+                            <li>AWS IoT</li>
+                            <li>MPLAB X</li>
+                        </ul>
+                    </div>
+                    <div class="skill-group">
+                        <h3>Certifications</h3>
+                        <ul class="certification-list">
+                            <li><i class="fas fa-award"></i> <a href="https://www.credly.com/badges/1220a2e0-2580-4966-9b6d-a316b2a0953a/public_url" target="_blank" rel="noopener noreferrer">AWS Solutions Architect – Assoc (2024)</a></li>
+                            <li><i class="fas fa-award"></i> <a href="https://coursera.org/verify/professional-cert/S2E49G3W9B9L" target="_blank" rel="noopener noreferrer">Google Cloud Data Engineer (2023)</a></li>
+                            <li><i class="fas fa-award"></i> <a href="https://coursera.org/verify/W9F83V5S892Z" target="_blank" rel="noopener noreferrer">TensorFlow Developer (2023)</a></li>
+                            <li><i class="fas fa-award"></i> <a href="https://coursera.org/verify/D9G55V5S892P" target="_blank" rel="noopener noreferrer">Azure AI Engineer (2024)</a></li>
+                            <li><i class="fas fa-award"></i> 5-Star HackerRank (C++, SQL, Python)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section id="contact">
+                    <h2><i class="fas fa-envelope"></i> Contact</h2>
+                    <div class="contact-icons">
+                        <a href="https://www.google.com/maps/place/Kolhapur,+Maharashtra,+India" target="_blank" rel="noopener noreferrer" data-label="Location">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </a>
+                        <a href="mailto:rehanmokashi786@gmail.com" data-label="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="tel:+919370409503" data-label="Phone">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/rehan-mokashi-7b32472a2/" target="_blank" rel="noopener noreferrer" data-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="https://github.com/rmokashi01" target="_blank" rel="noopener noreferrer" data-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="path/to/rehan_mokashi_resume.pdf" download="rehan_mokashi_resume.pdf" data-label="Download Resume">
+                            <i class="fas fa-file-download"></i>
+                        </a>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; <span id="current-year"></span> Rehan Mokashi. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.querySelectorAll('.left-column nav a');
+        
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Toggle sidebar on button click
+        menuToggle.addEventListener('click', () => {
+            const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+            if (isCollapsed) {
+                document.body.classList.remove('sidebar-collapsed');
+                document.body.classList.add('sidebar-expanded');
+                menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                document.body.classList.remove('sidebar-expanded');
+                document.body.classList.add('sidebar-collapsed');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Close sidebar when a nav link is clicked (for mobile)
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 992) {
+                    document.body.classList.remove('sidebar-expanded');
+                    document.body.classList.add('sidebar-collapsed');
+                    menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // Update body class on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992) {
+                document.body.classList.remove('sidebar-expanded');
+                document.body.classList.add('sidebar-collapsed');
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            } else {
+                // For mobile, maintain the overlay behavior
+                document.body.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        // Initial check on load
+        if (window.innerWidth > 992) {
+            document.body.classList.add('sidebar-collapsed');
+        } else {
+            document.body.classList.add('sidebar-expanded');
+        }
+    </script>
+</body>
+</html>
